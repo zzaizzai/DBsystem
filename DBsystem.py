@@ -33,20 +33,30 @@ df_main = pd.read_excel(path_DB_main, sheet_name='DB', index_col=None)
 df_method = pd.read_excel(path_method, sheet_name='method', index_col=None)
 df_target = pd.read_excel(path_target, sheet_name='target', index_col=None)
 
-print(df_main)
-print(df_method)
-print(df_target)
+
+def show_main_info(target: str):
+    print(df_main)
+    print(df_method)
+    print(df_target)
+
+    def reference_method_table(a):
+        return df_method[df_method["id"] == a]["method_name"].to_list()[0]
+
+    def reference_target_kind_table(a):
+        if len(df_target[df_target["target"] == a]["kind"]) > 0:
+            rubber = df_target[df_target["target"] == a]["kind"].to_list()[0]
+            return rubber
+        else:
+            return None
+
+    df_main["method"] = df_main["method_id"].apply(reference_method_table)
+    df_main["rubber"] = df_main["target"].apply(reference_target_kind_table)
 
 
-def reference_method_table(a):
-    return df_method[df_method["id"] == a]["method_name"].to_list()[0]
+    # print(df_main.loc[:,['target' ,'method']])
+    print(df_main[df_main["target"] == str(target) ])
 
-def reference_target_kind_table(a):
-    return df_target[df_target["target"] == a]["kind"].to_list()[0]
-
-df_main["method"] = df_main["method_id"].apply(reference_method_table)
-df_main["rubber"] = df_main["target"].apply(reference_target_kind_table)
-
-
-# print(df_main.loc[:,['target' ,'method']])
-print(df_main)
+if __name__ == "__main__":
+    print('DB system')
+    target = input('input target: ')
+    show_main_info(target)
