@@ -35,12 +35,15 @@ df_target = pd.read_excel(path_target, sheet_name='target', index_col=None)
 
 
 def show_main_info(target: str):
-    print(df_main)
-    print(df_method)
-    print(df_target)
+    # print(df_main)
+    # print(df_method)
+    # print(df_target)
 
     def reference_method_table(a):
-        return df_method[df_method["id"] == a]["method_name"].to_list()[0]
+        if len(df_method[df_method["id"] == a]["method_name"]) > 0:
+            return df_method[df_method["id"] == a]["method_name"].to_list()[0]
+        else:
+            return None
 
     def reference_target_kind_table(a):
         if len(df_target[df_target["target"] == a]["kind"]) > 0:
@@ -54,7 +57,7 @@ def show_main_info(target: str):
 
 
     # print(df_main.loc[:,['target' ,'method']])
-    print(df_main[df_main["target"] == str(target) ])
+    print(df_main[df_main["target"] == str(target) ].to_markdown())
 
 if __name__ == "__main__":
     print('DB system')

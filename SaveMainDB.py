@@ -1,12 +1,13 @@
 import pandas as pd
 import os
 import re
+import click
 
 path_DB_main = os.path.expanduser('~/Desktop') + '/DBsystem/DB_main.xlsx'
 path_method = os.path.expanduser('~/Desktop') + '/DBsystem/DB_method.xlsx'
 path_target = os.path.expanduser('~/Desktop') + '/DBsystem/DB_target.xlsx'
 
-df_main = pd.read_excel(path_DB_main, sheet_name='DB', index_col=None)
+# df_main = pd.read_excel(path_DB_main, sheet_name='DB', index_col=None)
 df_method = pd.read_excel(path_method, sheet_name='method', index_col=None)
 df_target = pd.read_excel(path_target, sheet_name='target', index_col=None)
 
@@ -51,6 +52,10 @@ def read_new_df(target: str):
         
 
     # print(reference_method_table_to_get_method_id("レオメーター"))
+
+def show_main_db_with_target(target:str):
+    df_main = pd.read_excel(path_DB_main, sheet_name='DB', index_col=None)
+    print(df_main)
 
 
 
