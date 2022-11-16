@@ -12,12 +12,20 @@ df_method = pd.read_excel(path_method, sheet_name='method', index_col=None)
 df_target = pd.read_excel(path_target, sheet_name='target', index_col=None)
 
 # print(df_main)
-print(df_method)
+print(df_method.to_markdown())
 
 
 def read_new_df(target: str):
+    
     path_new = os.path.expanduser(
         '~/Desktop') + f'/{target} Data/{target} Data.xlsx'
+    if not os.path.isfile(path_new):
+        print('no such a file')
+        return
+
+    df_main = pd.read_excel(path_DB_main, sheet_name='DB', index_col=None)
+    df_main = df_main.reset_index(drop=True)
+
     df_new = pd.read_excel(path_new, sheet_name='Sheet1', index_col=0)
     df_new = df_new.reset_index(drop=True)
     # print(df_new.columns.to_list()[4:])
@@ -28,9 +36,10 @@ def read_new_df(target: str):
             return 89
 
         a_first_name = re.split('[_ ]', a)[0]
+        # print(a_first_name)
         # print(len(df_method[df_method["method_name"].str.contains(a_first_name)]["id"]))
-        if len(df_method[df_method["method_name"].str.contains(a_first_name)]["id"]) > 0:
-            id_method = df_method[df_method["method_name"].str.contains(
+        if len(df_method[df_method["method_keyword"].str.contains(a_first_name)]["id"]) > 0:
+            id_method = df_method[df_method["method_keyword"].str.contains(
                 a_first_name)]["id"].to_list()[0]
             return id_method
         else:
@@ -38,51 +47,33 @@ def read_new_df(target: str):
 
     for a_target in target_list:
 
-        df_main = pd.read_excel(path_DB_main, sheet_name='DB', index_col=None)
-        df_main = df_main.reset_index(drop=True)
         # print(a_target)
         df_new_temp = df_new
         df_new_temp["value"] = df_new_temp[a_target]
         df_new_temp["target"] = a_target
         df_new_temp["method_id"] = df_new_temp["method"].apply(
             reference_method_table_to_get_method_id)
-        # print(df_new_temp.loc[:, ["target" ,'method', 'condition', 'type', 'unit', "value"]])
-        # print(df_new_temp)
+
         df_new_merge = df_new_temp.loc[:, [
             "target", 'method_id', 'condition', 'type', 'unit', "value"]]
-        # print(df_new_merge.to_markdown())
+  
+        def update_target_data(df_old, df_new, target:str):
+            print('updating ' ,target)
+            df_old_temp = df_old
+            df_old_temp = df_old_temp.drop(index=df_old_temp[df_old_temp["target"] == target].index)
+            df_old_temp = df_old_temp.reset_index(drop=True)
+            df_old_temp =pd.concat([df_old_temp, df_new], ignore_index=True)
+            # print(df_old_temp_new)
+            return df_old_temp
 
-        def update_row_data(df_old, df_object_new: object):
 
-            if df_object_new.dtypes != object:
-                return
-
-            if len(df_old[(df_old["target"] == df_object_new["target"])
-                          & (df_old["method_id"] == df_object_new["method_id"])
-                          & (df_old["condition"] == df_object_new["condition"])
-                          & (df_old["type"] == df_object_new["type"])
-                          & (df_old["unit"] == df_object_new["unit"])
-                          & (df_old["value"] == df_object_new["value"])]) > 0:
-                # print('data exist')
-                pass
-            elif len(df_old[(df_old["target"] == df_object_new["target"])
-                          & (df_old["method_id"] == df_object_new["method_id"])
-                          & (df_old["condition"] == df_object_new["condition"])
-                          & (df_old["type"] == df_object_new["type"])
-                          & (df_old["unit"] == df_object_new["unit"])
-                          & (df_old["value"] != df_object_new["value"])]) > 0:
-                print(f'{df_object_new["target"]} update data with {df_object_new["type"]}')
-            else:
-                print(f'{df_object_new["target"]} new data with {df_object_new["type"]}')
-
-        for i in df_new_merge.index:
             # print(df_new_merge.loc[i].to_markdown())
-            update_row_data(df_main, df_new_merge.loc[i])
-        # df_main_merge = df_main
-        # df_main_merge = pd.concat([df_main_merge, df_new_merge], axis=0)
-        # print(df_main_merge)
-        # df_main_merge.to_excel(path_DB_main, index=None, sheet_name='DB')
+        df_main = update_target_data(df_main, df_new_merge, a_target)
 
+    df_main.to_excel(path_DB_main, index=None, sheet_name='DB')
+    print('save merge df')
+    
+    # print(df_main.to_markdown())
     # print(reference_method_table_to_get_method_id("レオメーター"))
 
 
