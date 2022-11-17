@@ -110,9 +110,9 @@ def show_main_info_compare(target_list:list):
                         & (df_old['condition'] == df_new.at[row_index, 'condition'])
                         & (df_old['type'] == df_new.at[row_index, 'type'])
                         & (df_old['unit'] == df_new.at[row_index, 'unit'])].index.to_list()[0]
-                target_temp = df_new.at[row_index, "target"]
+                target_temp = str(df_new.at[row_index, "target"])
 
-                df_old.at[index_of_row_old, target_temp] = df_new.at[row_index, 'value']
+                df_old.at[index_of_row_old, target_temp] = str(df_new.at[row_index, 'value'])
                 
             else:
                 df_old = pd.concat([df_old, df_new.loc[[row_index],:]])
@@ -148,7 +148,7 @@ def show_main_info_compare(target_list:list):
     print(reference_target_list(target_list).to_markdown())
     # print(df_show_target.to_markdown())
     df_show_target = df_show_target.drop(['target','value'], axis=1)
-    df_show_target = df_show_target.sort_values(['method_id'])
+    df_show_target = df_show_target.sort_values(['method_id','condition'])
     print(df_show_target.to_markdown())
         
 
@@ -159,17 +159,19 @@ def show_main_info_compare(target_list:list):
 
 if __name__ == "__main__":
     print('DB system')
-    # target = input('input target: ')
+    # target_list = input('input target: ')
     # show_main_info(target)
-    target_list = ['CBA001-003']
-    # while True:
-    #     print('current target list: ',target_list)
-    #     a = input(f'target_list: ')
-    #     if a == 'go':
-    #         break
-    #     elif a== 'remove':
-    #         target_list.pop()
-    #     else:
-    #         target_list.append(a)
+    # target_list = ['CBA001-003']
+    target_list = []
+    while True:
+    
+        print('current target list: ',target_list)
+        a = input(f'target_list: ')
+        if a == 'go':
+            break
+        elif a== 'remove':
+            target_list.pop()
+        else:
+            target_list.append(a)
 
     show_main_info_compare(target_list)

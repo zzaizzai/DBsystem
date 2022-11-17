@@ -34,6 +34,21 @@ def save_data_in_mainDB():
         
         print(f'save {target} from data excel')
         SaveMainDB.read_new_df(target)
+@app.command("compare")
+def compare_data_in_mainDB():
+    target_list = []
+    while True:
+
+        print('current target list: ',target_list)
+        a = input(f'target_list: ')
+        if a == 'go':
+            break
+        elif a== 'remove':
+            target_list.pop()
+        else:
+            target_list.append(a)
+
+    DBsystem.show_main_info_compare(target_list)
 
 
 if __name__ == "__main__":
